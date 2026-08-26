@@ -43,7 +43,6 @@ coverage/
 Thumbs.db
 
 .supabase/
-
 # Ignore local database states, migrations data, and secrets
 supabase/.temp/
 supabase/.branches/

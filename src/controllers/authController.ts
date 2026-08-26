@@ -1,54 +1,79 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { supabase } = require('../config/dbConnection');
 const path = require('path')
+const { returnUserByUsername, insertUser } = require('../repositories/users');
+const { storeRefreshToken } = require('../repositories/refreshToken');
 import type { Request, Response } from 'express';
 
 
- const handleLogin = async(req: Request,res: Response) =>{
 
-//aici sa fac cu jwt dupa successful login
 
-}
+const handleLogin = async (req: Request, res: Response) => {
+  const body = (req.body ?? {}) as { username?: string; password?: string };
+  const { username, password } = body;
 
-const handleRegister = async(req: Request,res: Response) =>{
-
-const body = (req.body ?? {}) as { username?: string; password?: string }; //oh wow altfel imi dadea eroare trb sa ma obisnuiesc cu ts
-const { username, password } = body;
-if(!username || !password){
+  if (!username || !password) {
     return res.status(400).json({ message: 'Username and password are required.' });
-}
+  }
 
-try {
-//verific daca exista deja
-    const { data: existingUser, error: existingUserError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('username', username)
-        .single();
-        
-    if (existingUser) {
-        return res.status(409).json({ message: 'Username already exists.' });
-    }
-} catch (error) {
-    console.error('Error occurred while checking user:', error);
+  const normalizedUsername = username.trim().toLowerCase();
+
+  const existingUser = await returnUserByUsername(normalizedUsername); //am mutat in repositories pentru ca asa: trebuie
+
+  if (!existingUser) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: 'Invalid password.' });
+  }
+
+  const accessToken = jwt.sign(
+  { username: existingUser.username },
+  process.env.ACCESS_TOKEN_SECRET,
+  { expiresIn: '1h' }
+);
+
+const refreshToken = jwt.sign(
+  { username: existingUser.username },
+  process.env.REFRESH_TOKEN_SECRET,
+  { expiresIn: '1d' }
+);
+
+  await storeRefreshToken(existingUser.id, refreshToken);
+
+  return res.status(200).json({ message: 'Login successful.', accessToken }); //accessToken e trimis pe front ca raspuns, de mentionat Lorenei ca trebuie stored ca httponly
+};
+
+const handleRegister = async (req: Request, res: Response) => {
+  const body = (req.body ?? {}) as { username?: string; password?: string };
+  const { username, password } = body;
+
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and password are required.' });
+  }
+
+  const normalizedUsername = username.trim().toLowerCase();
+
+  const existingUser = await returnUserByUsername(normalizedUsername);
+
+  if (existingUser) {
+    return res.status(409).json({ message: 'Username already exists.' });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await insertUser(normalizedUsername, hashedPassword);
+
+  if (!newUser) {
     return res.status(500).json({ message: 'Internal server error.' });
-}
+  }
 
-//criptare cu bcrypt
-const hashedPassword = await bcrypt.hash(password, 10);
+  return res.status(201).json({ message: 'User created successfully.' });
+};
 
-const { data: newUser, error: newUserError } = await supabase
-    .from('users')
-    .insert([{ username, password: hashedPassword }])
-    .single();
 
-if (newUserError) {
-    console.error('Error occurred while creating user:', newUserError);
-    return res.status(500).json({ message: 'Internal server error.' });
-}
-
-}
 
 
 module.exports = { handleLogin, handleRegister };
