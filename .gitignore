@@ -52,3 +52,5 @@ supabase/.branches/
 supabase/functions/**/.env
 
 supabase/config.toml
+
+usefulCommands.txt
