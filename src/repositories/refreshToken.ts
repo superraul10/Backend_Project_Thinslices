@@ -1,9 +1,9 @@
-const { supabase } = require('../config/dbConnection');
+import { supabase } from '../config/dbConnection.js';
 
-const storeRefreshToken = async (userId: string, refreshToken: string) => {
+export const storeRefreshToken = async (userId: string, refreshToken: string) => {
   const { data, error } = await supabase
     .from('users')
-    .update({ refresh_token: refreshToken }) 
+    .update({ refresh_token: refreshToken })
     .eq('id', userId)
     .select('id')
     .single();
@@ -16,10 +16,10 @@ const storeRefreshToken = async (userId: string, refreshToken: string) => {
   return data;
 };
 
-const getRefreshToken = async (userId: string) => {
+export const getRefreshToken = async (userId: string) => {
   const { data, error } = await supabase
     .from('users')
-    .select('refresh_token') 
+    .select('refresh_token')
     .eq('id', userId)
     .single();
 
@@ -31,10 +31,10 @@ const getRefreshToken = async (userId: string) => {
   return data?.refresh_token ?? null;
 };
 
-const deleteRefreshToken = async (userId: string) => {
+export const deleteRefreshToken = async (userId: string) => {
   const { data, error } = await supabase
     .from('users')
-    .update({ refresh_token: null }) 
+    .update({ refresh_token: null })
     .eq('id', userId)
     .select('id')
     .single();
@@ -46,5 +46,3 @@ const deleteRefreshToken = async (userId: string) => {
 
   return data;
 };
-
-module.exports = { storeRefreshToken, getRefreshToken, deleteRefreshToken };

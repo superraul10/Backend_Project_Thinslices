@@ -1,4 +1,7 @@
-import express = require('express');
+import express from 'express';
+import type { Request, Response } from 'express';
+import authRouter from './routes/authRouter.js';
+import recipeRouter from './routes/recipeRouter.js';
 
 const app = express();
 const PORT = 3000;
@@ -6,12 +9,13 @@ const PORT = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: express.Request, res: express.Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello from TypeScript Express!');
 });
 
 //aici apelez routerul pentru lucruri legate de autentificare (eventual daca termin mai repede sa fac si logout)
-app.use('/auth', require('./routes/authRouter'));
+app.use('/auth', authRouter);
+app.use('/recipes', recipeRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

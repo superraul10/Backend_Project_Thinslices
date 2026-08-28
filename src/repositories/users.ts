@@ -1,8 +1,8 @@
-const { supabase } = require('../config/dbConnection');
-const bcrypt = require('bcrypt');
+import { supabase } from '../config/dbConnection.js';
+import bcrypt from 'bcrypt';
 
 
-const returnUserByUsername = async (username: string) => {
+export const returnUserByUsername = async (username: string) => {
   const normalizedUsername = username.trim().toLowerCase();
 
   const { data: existingUser, error: existingUserError } = await supabase
@@ -20,7 +20,7 @@ const returnUserByUsername = async (username: string) => {
 };
 
 
-const insertUser = async (username: string, password: string) => {
+export const insertUser = async (username: string, password: string) => {
   const normalizedUsername = username.trim().toLowerCase();
 
   const { data: newUser, error: insertUserError } = await supabase
@@ -36,4 +36,3 @@ const insertUser = async (username: string, password: string) => {
 
   return newUser;
 }
-module.exports = { returnUserByUsername, insertUser };
