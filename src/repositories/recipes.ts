@@ -43,3 +43,17 @@ export const getRecipeById = async (recipeId: number) => {
 
   return recipe;
 };
+
+export const getRecipesByUserId = async (userId: number) => {
+  const {data: recipes, error: getRecipesError } = await supabase
+    .from('recipes')
+    .select('*')
+    .eq('user_id', userId);
+
+  if (getRecipesError) {
+    console.error('DB error while fetching recipes by user ID:', getRecipesError);
+    throw new Error('Database error.');
+  }
+
+  return recipes;
+};

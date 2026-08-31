@@ -13,7 +13,6 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Hello from TypeScript Express!');
 });
 
-//aici apelez routerul pentru lucruri legate de autentificare (eventual daca termin mai repede sa fac si logout)
 app.use('/auth', authRouter);
 app.use('/recipes', recipeRouter);
 

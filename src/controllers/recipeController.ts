@@ -3,6 +3,7 @@ import { addRecipe } from '../services/recipes/addRecipe.js';
 import { AppError } from '../types/AppError.js';
 import type { RecipeInput } from '../types/Recipe.js';
 import { fetchRecipeById } from '../services/recipes/getRecipeById.js';
+import { fetchRecipes } from '../services/recipes/getRecipes.js';
 
 const handleAddRecipe = async (req: Request, res: Response) => {
   const body = (req.body ?? {}) as RecipeInput;
@@ -34,5 +35,23 @@ const handleGetRecipeById = async (req: Request, res: Response) => {
   }
 };
 
-export { handleAddRecipe, handleGetRecipeById };
+const handleGetRecipes = async (req: Request, res: Response) => { 
+    const userId = req.user?.id;
 
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required.' });
+    }
+
+    try {
+        const recipes = await fetchRecipes(userId);
+        return res.status(200).json({ recipes });
+    } catch (err) {
+        if (err instanceof AppError) {
+            return res.status(err.statusCode).json({ message: err.message });
+        }
+        console.error('Unexpected error while fetching recipes:', err);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+export { handleAddRecipe, handleGetRecipeById, handleGetRecipes };
