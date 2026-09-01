@@ -1,0 +1,1 @@
+GRANT SELECT, INSERT, DELETE ON public.recipes TO service_role;

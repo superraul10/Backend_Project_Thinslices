@@ -1,4 +1,5 @@
 import { supabase } from '../config/dbConnection.js';
+import type { RecipeInput } from '../types/Recipe.js';
 
 export const insertRecipe = async (recipe: {
   title: string;
@@ -56,4 +57,56 @@ export const getRecipesByUserId = async (userId: number) => {
   }
 
   return recipes;
+};
+
+export const updateRecipeById = async (recipeId: number, updates: RecipeInput) => {
+  const updatePayload: Record<string, unknown> = {};
+  if (updates.title !== undefined) updatePayload.title = updates.title;
+  if (updates.ingredients !== undefined) updatePayload.ingredients = updates.ingredients;
+  if (updates.steps !== undefined) updatePayload.steps = updates.steps;
+  if (updates.prepTime !== undefined) updatePayload.prep_time = updates.prepTime;
+  if (updates.photoUrl !== undefined) updatePayload.photo_url = updates.photoUrl;
+
+  const { data: updatedRecipe, error: updateRecipeError } = await supabase
+    .from('recipes')
+    .update(updatePayload)
+    .eq('id', recipeId)
+    .select('*')
+    .maybeSingle();
+
+  if (updateRecipeError) {
+    console.error('DB error while updating recipe:', updateRecipeError);
+    throw new Error('Database error.');
+  }
+
+  return updatedRecipe;
+};
+
+export const deleteRecipeById = async (recipeId: number) => {
+  const { data: recipe, error: getRecipeError } = await supabase
+    .from('recipes')
+    .select('*')
+    .eq('id', recipeId)
+    .single();
+
+  if (getRecipeError) {
+    console.error('DB error while fetching recipe:', getRecipeError);
+    throw new Error('Database error.');
+  }
+
+  if (!recipe) {
+    return null; // Recipe not found
+  }
+
+  const { error: deleteRecipeError } = await supabase
+    .from('recipes')
+    .delete()
+    .eq('id', recipeId);
+
+  if (deleteRecipeError) {
+    console.error('DB error while deleting recipe:', deleteRecipeError);
+    throw new Error('Database error.');
+  }
+
+  return recipe;  
 };
