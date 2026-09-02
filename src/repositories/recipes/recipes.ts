@@ -35,7 +35,7 @@ export const getRecipeById = async (recipeId: number) => {
     .from('recipes')
     .select('*')
     .eq('id', recipeId)
-    .single();
+    .maybeSingle();
 
   if (getRecipeError) {
     console.error('DB error while fetching recipe:', getRecipeError);
@@ -87,7 +87,7 @@ export const deleteRecipeById = async (recipeId: number) => {
     .from('recipes')
     .select('*')
     .eq('id', recipeId)
-    .single();
+    .maybeSingle();
 
   if (getRecipeError) {
     console.error('DB error while fetching recipe:', getRecipeError);

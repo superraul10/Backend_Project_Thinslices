@@ -50,6 +50,4 @@ supabase/.branches/
 # Supabase Edge Functions local secrets
 supabase/functions/**/.env
 
-supabase/config.toml
-
 usefulCommands.txt

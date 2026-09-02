@@ -7,7 +7,7 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : undefined;
 
   if (!token) {
-    return res.status(401).json({ message: 'Access token is required.' });
+    throw new AppError(401, 'No token provided. Please log in.');
   }
 
   try {
@@ -17,6 +17,6 @@ export const verifyJWT = (req: Request, res: Response, next: NextFunction) => {
     if (err instanceof AppError) {
       return res.status(err.statusCode).json({ message: err.message });
     }
-    return res.status(401).json({ message: 'Invalid or expired token.' });
+    throw new AppError(401, 'Invalid or expired token.');
   }
 };
