@@ -1,4 +1,4 @@
-import { deleteRecipeById} from '../../repositories/recipes.js';
+import { deleteRecipeById} from '../../repositories/recipes/recipes.js';
 import { AppError } from '../../types/AppError.js';
 
 export const removeRecipeById = async (recipeId: number) => {

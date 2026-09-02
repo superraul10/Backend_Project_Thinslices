@@ -1,15 +1,10 @@
-import { updateRecipeById } from '../../repositories/recipes.js';
+import { updateRecipeById } from '../../repositories/recipes/recipes.js';
 import { AppError } from '../../types/AppError.js';
-import type { RecipeInput } from '../../types/Recipe.js';
+import type { RecipeUpdateInput } from '../../types/recipes/Recipe.js';
 
-export const updateRecipe = async (recipeId: number, input: RecipeInput) => {
+export const updateRecipe = async (recipeId: number, input: RecipeUpdateInput) => {
   if (!recipeId) {
     throw new AppError(400, 'Recipe ID is required.');
-  }
-
-  const hasUpdate = Object.values(input).some((value) => value !== undefined);
-  if (!hasUpdate) {
-    throw new AppError(400, 'At least one field must be provided to update.');
   }
 
   const updatedRecipe = await updateRecipeById(recipeId, input);

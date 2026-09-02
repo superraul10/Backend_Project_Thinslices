@@ -1,14 +1,16 @@
 import type { Request, Response } from 'express';
-import { addRecipe } from '../services/recipes/addRecipe.js';
-import { AppError } from '../types/AppError.js';
-import type { RecipeInput } from '../types/Recipe.js';
-import { fetchRecipeById } from '../services/recipes/getRecipeById.js';
-import { fetchRecipes } from '../services/recipes/getRecipes.js';
-import { removeRecipeById } from '../services/recipes/deleteRecipe.js';
-import { updateRecipe } from '../services/recipes/updateRecipe.js';
+import { addRecipe } from '../../services/recipes/addRecipe.js';
+import { AppError } from '../../types/AppError.js';
+import type { RecipeInput, RecipeUpdateInput, RecipeImageInput } from '../../types/recipes/Recipe.js';
+import { fetchRecipeById } from '../../services/recipes/getRecipeById.js';
+import { fetchRecipes } from '../../services/recipes/getRecipes.js';
+import { removeRecipeById } from '../../services/recipes/deleteRecipe.js';
+import { updateRecipe } from '../../services/recipes/updateRecipe.js';
+import { addImage } from '../../services/recipes/addImage.js';
+import { uploadRecipePhoto } from '../../services/recipes/uploadRecipePhoto.js';
 
 const handleAddRecipe = async (req: Request, res: Response) => {
-  const body = (req.body ?? {}) as RecipeInput;
+  const body = req.body as RecipeInput;
 
   try {
     const newRecipe = await addRecipe(req.user?.id, body);
@@ -73,7 +75,7 @@ const handleDeleteRecipe = async (req: Request, res: Response) => {
 
 const handleUpdateRecipe = async (req: Request, res: Response) => {
   const recipeId = parseInt(req.params.id as string, 10);
-  const body = (req.body ?? {}) as RecipeInput;
+  const body = req.body as RecipeUpdateInput;
 
   try {
     const updatedRecipe = await updateRecipe(recipeId, body);
@@ -87,5 +89,36 @@ const handleUpdateRecipe = async (req: Request, res: Response) => {
   }
 };
 
-export { handleAddRecipe, handleGetRecipeById, handleGetRecipes, handleDeleteRecipe, handleUpdateRecipe };
+const handleAddImage = async (req: Request, res: Response) => {
+  const recipeId = parseInt(req.params.id as string, 10);
+  const { imageUrl } = req.body as RecipeImageInput;
+
+  try {
+    const updatedRecipe = await addImage(recipeId, imageUrl);
+    return res.status(200).json({ message: 'Image added successfully.', recipe: updatedRecipe });
+  } catch (err) {
+    if (err instanceof AppError) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }
+    console.error('Unexpected error while adding image to recipe:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+const handleUploadRecipePhoto = async (req: Request, res: Response) => {
+  const recipeId = parseInt(req.params.id as string, 10);
+
+  try {
+    const updatedRecipe = await uploadRecipePhoto(recipeId, req.file);
+    return res.status(200).json({ message: 'Photo uploaded successfully.', recipe: updatedRecipe });
+  } catch (err) {
+    if (err instanceof AppError) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }
+    console.error('Unexpected error while uploading recipe photo:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+export { handleAddRecipe, handleGetRecipeById, handleGetRecipes, handleDeleteRecipe, handleUpdateRecipe, handleAddImage, handleUploadRecipePhoto };
 

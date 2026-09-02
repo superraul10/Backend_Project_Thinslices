@@ -1,6 +1,6 @@
-import { getRecipeById, getRecipesByUserId } from '../../repositories/recipes.js';
+import { getRecipeById, getRecipesByUserId } from '../../repositories/recipes/recipes.js';
 import { AppError } from '../../types/AppError.js';
-import type { RecipeInput } from '../../types/Recipe.js';
+import type { RecipeInput } from '../../types/recipes/Recipe.js';
 
 export const fetchRecipes = async (userId: number) => {
   if (!userId) {

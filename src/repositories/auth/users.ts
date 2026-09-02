@@ -1,4 +1,4 @@
-import { supabase } from '../config/dbConnection.js';
+import { supabase } from '../../config/dbConnection.js';
 import bcrypt from 'bcrypt';
 
 

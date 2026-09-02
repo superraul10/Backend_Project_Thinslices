@@ -1,5 +1,5 @@
-import { supabase } from '../config/dbConnection.js';
-import type { RecipeInput } from '../types/Recipe.js';
+import { supabase } from '../../config/dbConnection.js';
+import type { RecipeUpdateInput } from '../../types/recipes/Recipe.js';
 
 export const insertRecipe = async (recipe: {
   title: string;
@@ -59,7 +59,7 @@ export const getRecipesByUserId = async (userId: number) => {
   return recipes;
 };
 
-export const updateRecipeById = async (recipeId: number, updates: RecipeInput) => {
+export const updateRecipeById = async (recipeId: number, updates: RecipeUpdateInput) => {
   const updatePayload: Record<string, unknown> = {};
   if (updates.title !== undefined) updatePayload.title = updates.title;
   if (updates.ingredients !== undefined) updatePayload.ingredients = updates.ingredients;
@@ -110,3 +110,20 @@ export const deleteRecipeById = async (recipeId: number) => {
 
   return recipe;  
 };
+
+export const addImageToRecipe = async (recipeId: number, imageUrl: string) => {
+  const { data: updatedRecipe, error: updateRecipeError } = await supabase
+    .from('recipes')
+    .update({ photo_url: imageUrl })
+    .eq('id', recipeId)
+    .select('*')
+    .maybeSingle();
+
+  if (updateRecipeError) {
+    console.error('DB error while adding image to recipe:', updateRecipeError);
+    throw new Error('Database error.');
+  }
+
+  return updatedRecipe;
+};
+

@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { returnUserByUsername, insertUser } from '../../repositories/users.js';
+import { returnUserByUsername, insertUser } from '../../repositories/auth/users.js';
 import { AppError } from '../../types/AppError.js';
 
 export const registerUser = async (username?: string, password?: string) => {

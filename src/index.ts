@@ -1,7 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
-import authRouter from './routes/authRouter.js';
-import recipeRouter from './routes/recipeRouter.js';
+import authRouter from './routes/auth/authRouter.js';
+import recipeRouter from './routes/recipes/recipeRouter.js';
 
 const app = express();
 const PORT = 3000;

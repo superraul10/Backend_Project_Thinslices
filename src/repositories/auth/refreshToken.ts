@@ -1,4 +1,4 @@
-import { supabase } from '../config/dbConnection.js';
+import { supabase } from '../../config/dbConnection.js';
 
 export const storeRefreshToken = async (userId: string, refreshToken: string) => {
   const { data, error } = await supabase

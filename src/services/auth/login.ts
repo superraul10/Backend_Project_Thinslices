@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import { returnUserByUsername } from '../../repositories/users.js';
-import { storeRefreshToken } from '../../repositories/refreshToken.js';
+import { returnUserByUsername } from '../../repositories/auth/users.js';
+import { storeRefreshToken } from '../../repositories/auth/refreshToken.js';
 import { AppError } from '../../types/AppError.js';
 import { createJWT, accessTokenSecret, refreshTokenSecret } from '../../utils/jwt.js';
 

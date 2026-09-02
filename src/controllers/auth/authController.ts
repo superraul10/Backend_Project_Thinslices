@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import { loginUser } from '../services/auth/login.js';
-import { registerUser } from '../services/auth/register.js';
-import { AppError } from '../types/AppError.js';
+import { loginUser } from '../../services/auth/login.js';
+import { registerUser } from '../../services/auth/register.js';
+import { AppError } from '../../types/AppError.js';
 
 const handleLogin = async (req: Request, res: Response) => {
   const body = (req.body ?? {}) as { username?: string; password?: string };
