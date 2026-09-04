@@ -90,6 +90,7 @@ supabase/migrations/       Database schema (source of truth)
 | `npm run dev`      | Start the dev server with hot reload (`tsx watch`)          |
 | `npm run build`    | Type-check and compile to `dist/`                            |
 | `npm start`        | Run the compiled server (`node dist/index.js`)                |
+| `npm run seed`     | Populate the local DB with sample users and recipes             |
 | `npm test`         | Run the Vitest suite (unit + integration)                       |
 
 ## API reference
